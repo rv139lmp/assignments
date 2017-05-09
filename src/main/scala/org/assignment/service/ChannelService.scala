@@ -1,4 +1,6 @@
-package org.assignment
+package org.assignment.service
+
+import org.assignment.model.{Channel, User}
 
 /**
   * Created by rahul on 9/5/17.
