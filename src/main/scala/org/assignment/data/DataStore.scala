@@ -8,14 +8,14 @@ import org.assignment.model._
 object DataStore {
   import scala.collection.mutable.{MutableList => MList}
 
-  val Channels: MList[Channel] = _
+  val Channels: MList[Channel] = new MList[Channel]
 
-  val Users: MList[User] = _
+  val Users: MList[User] = new MList[User]
 
-  val Followings: MList[Following] = _
+  val Followings: MList[Following] = new MList[Following]
 
-  var PhoneNumbers: MList[PhoneNumber] = _
+  var PhoneNumbers: MList[PhoneNumber] = new MList[PhoneNumber]
 
-  val allocationInfo : AllocationInfo = _
+  val allocationInfo : AllocationInfo = new AllocationInfo
 
 }
