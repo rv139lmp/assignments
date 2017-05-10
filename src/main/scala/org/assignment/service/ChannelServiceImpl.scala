@@ -28,6 +28,6 @@ class ChannelServiceImpl extends ChannelService{
         case ex:NoFollowerForChannelException => println(s"No followers exists for channel id ${channel.id}")
       }
     }
-    println(s"msg = $msg broadcasted for channel = $channel")
+    println(s"msg = $msg broadcasted for channel = ${channel.name}")
   }
 }

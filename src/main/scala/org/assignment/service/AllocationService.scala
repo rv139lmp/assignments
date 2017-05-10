@@ -15,8 +15,10 @@ class AllocationService {
   def updateAndGetCluster(node: Node, allocationInfo: AllocationInfo):Cluster ={
     val phoneNumber=node.channel.phoneNumber.getOrElse(Utils.emptyPhoneNumber)
     val cluster=allocationInfo.clusterForPhoneNumber(phoneNumber)
+    var removedNode : Node= null
     if(cluster.nonEmpty && cluster.get.isNodeExist(node)){
-      cluster.get.removeNode(node)
+        removedNode=cluster.get.nodeForChannelId(node.channel.id).get
+        cluster.get.removeNode(node)
     }
     else {
       // because for every channel even with single following
@@ -24,18 +26,19 @@ class AllocationService {
       throw NoFollowerForChannelException("Node does not belong to any cluster")
     }
 
-    val newClusterForNode = allocateCluster(node,allocationInfo)
-    node.channel.updatePhoneNumber(newClusterForNode.phoneNumber)
-    newClusterForNode.addNode(node)
+    val newClusterForNode = allocateCluster(removedNode,allocationInfo)
+    removedNode.channel.updatePhoneNumber(newClusterForNode.phoneNumber)
+    newClusterForNode.addNode(removedNode)
     newClusterForNode
   }
 
   def allocateCluster(node: Node, allocationInfo: AllocationInfo) :Cluster = {
-    val eligibleClusters=allocationInfo.clusters.filter(cluster =>  ! cluster.isCollideForNode(node))
+    val eligibleClusters=allocationInfo.clusters.filter(cluster =>  ! cluster.isCollideForNode(node) && cluster.phoneNumber != Utils.emptyPhoneNumber)
     if(eligibleClusters.isEmpty){
       val newPhoneNumber=PhoneNumbers.head
       PhoneNumbers = PhoneNumbers.tail
       val newCluster=Cluster(newPhoneNumber)
+      allocationInfo.addCluster(newCluster)
       newCluster
     }
     else getOrderedClusterList(eligibleClusters.toList).head
@@ -45,7 +48,7 @@ class AllocationService {
   //Balance : to minimize chances of future collision
   //TODO: need to consider number of nodes too for scoring
   def getOrderedClusterList(cluster: List[Cluster]) = {
-    cluster.sortBy( x => x.userNodeMap.size)
+    cluster.sortBy( x => x.nodes.flatMap(node => node.followers).size)
   }
 
 

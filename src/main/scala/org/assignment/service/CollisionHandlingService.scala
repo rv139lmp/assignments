@@ -11,9 +11,7 @@ class CollisionHandlingService {
 
   def isCollide(cluster:Cluster, following: Following): Boolean ={
     val user = Utils.userFromUserId(following.userId)
-    def isFollowingAlreadyPresent = cluster.getCollisionNodeForUser(user).get.channel.id == following.channelId
-
-    (cluster.isCollideForUser(user) && ! isFollowingAlreadyPresent)
+    cluster.isCollideForUser(user)
   }
 
 
@@ -22,7 +20,7 @@ class CollisionHandlingService {
   def handleCollision(cluster:Cluster, following: Following, allocationInfo:AllocationInfo): Cluster ={
     val user = Utils.userFromUserId(following.userId)
     val newlyFollowedNode = cluster.channelIdToNodeMap.get(following.channelId)
-    val existingNode= cluster.getCollisionNodeForUser(user)
+    val existingNode= cluster.getCollisionNodeForUser(user,newlyFollowedNode)
 
     def nodeToMoveFromCluster = {
       if(newlyFollowedNode.isEmpty) {

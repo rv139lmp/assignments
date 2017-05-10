@@ -23,4 +23,29 @@ class AllocationInfo{
   }
 
   def clusterForPhoneNumber(phoneNumber: PhoneNumber)=phoneNumberToClusterMap.get(phoneNumber)
+
+  def printInfo={
+    println()
+    println()
+    println()
+    println(s"===============================================" )
+    println(s"====================Cluster Info===============" )
+    println(s"===============================================" )
+    println()
+
+    if(clusters.size < 1) println("cluster empty")
+    clusters.map(
+      c => {
+        println(s"====================${c.phoneNumber} Cluster===============" )
+        c.nodes.map(
+          n => {
+            println(s"Node = ${n.channel.name}")
+            n.followers.map(
+              f => println(s"\t  Follower = ${f.name}")
+            )
+          }
+        )
+      }
+    )
+  }
 }
