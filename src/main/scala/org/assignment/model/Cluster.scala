@@ -51,11 +51,11 @@ case class Cluster(phoneNumber: PhoneNumber){
     false
   }
   def getCollisionNodeForUser(user: User,newlyFollowedNodeByThisUser:Option[Node]) :Option[Node]= {
-    nodes.map( node => {
-      if(node.followers.contains(user) &&
-        (newlyFollowedNodeByThisUser.isEmpty|| node != newlyFollowedNodeByThisUser.get)) return Option(node)
-    })
-    None
+    var userFollowedNodes=nodes.filter( node => node.followers.contains(user))
+    if(userFollowedNodes.size>1 && newlyFollowedNodeByThisUser.nonEmpty){
+      userFollowedNodes=userFollowedNodes.filter(node => node != newlyFollowedNodeByThisUser.get)
+    }
+    Option(userFollowedNodes.head)
   }
 
 
